@@ -20,3 +20,27 @@ pip install nvidia-tensorrt
 pip install onnxoptimizer
 pip install nvidia-tensorrt
 ```
+
+## Benchmark setup
+
+Vanilla BERT (tested on randomly generated input data). Benchmarks should be pretty close for many of the transformer architectures.
+
+## Few notes
+
+Here is few key conclusions that I came up to when doing research towards inference optimization tools for transformers:
+- As always, installing tools right takes more time than actually using those (especially Nvidia ones)
+- Loads of optimization papers (more than new architectures) emerge almost every month, so that optimization can become a field on its own :sweat_smile:
+Analyzing how tools like ONNX, TensorRT, etc.,works, most of them apply either one or more combinations of several methods below:
+- Remove redundant operations, e.g. dropout in inference
+- Perform constant folding, e.g. loading constants on compile time rather than runtime
+- Kernel fusion, e.g. keeping intermediate values in cache, rather than going back n forth with RAM
+- Layer fusion, e.g. compressing 2 or more compatible layers (Conv2d, ReLu, Bias..) into one
+- Mixed precision/Quantization - reducing precision on weights & activations wherever possible (with loss-scaling to preserve small gradients)
+- Unstructured and structured pruning - removing some neuron from non-fragile* architectures based on magnitude, movement, and structure
+Brief Results in few points:
+- Pytorch FP16 - 1.5x speedup across different batch sizes best being batch size 256 - largest
+- ONNX FP16 - 2-3x speedup across different batch sizes, relatively same performance on all batch sizes from 1 to 256
+- TensorRT - 5-8x speedup across different batch sizes, best being batch size 256 - largest
+- TorchDynamo with nvFuser/nnc - 2-3x speedup across different batch sizes best being batch size 1. Unlike tools above, no conversion to intermediate format is required.
+
+For more. Reference to the actual torchdynamo [repo](https://github.com/pytorch/torchdynamo) 
