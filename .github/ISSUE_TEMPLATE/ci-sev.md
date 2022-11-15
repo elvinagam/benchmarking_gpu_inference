@@ -1,6 +1,6 @@
 ---
 name: "⚠️ CI SEV"
-about: Tracking incidents for PyTorch's CI infra.
+about: Tracking incidents for Doc AI's CI infra.
 ---
 
 > NOTE: Remember to label this issue with "`ci: sev`"
@@ -29,7 +29,7 @@ e.g.
 </details>
 
 ## User impact
-*How does this affect users of PyTorch CI?*
+*How does this affect users of Doc AI CI?*
 
 ## Root cause
 *What was the root cause of this issue?*
